@@ -10,6 +10,7 @@ void run_hashtable_tests();
 void run_maxheap_tests();
 void run_bst_tests();
 void run_mergesort_tests();
+void run_auction_tests();
 
 int main() {
     std::cout << "== DynArray ==" << std::endl;
@@ -29,6 +30,9 @@ int main() {
 
     std::cout << "== MergeSort ==" << std::endl;
     run_mergesort_tests();
+
+    std::cout << "== AuctionSystem ==" << std::endl;
+    run_auction_tests();
 
     return printTestSummary();
 }
