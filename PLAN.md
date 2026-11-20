@@ -17,6 +17,21 @@ D:\claude-practice\data-structures\
 └── report\       ← 口頭報告簡報，使用者另行製作，Claude Code 不要動
 ```
 
+**GitHub 部署資訊（使用者已設定完成）**
+
+| 項目 | 值 |
+|---|---|
+| GitHub 帳號 | `zhao-926` |
+| Repo | `https://github.com/zhao-926/bidding-system`（Public，目前為空 repo） |
+| Git remote | `https://github.com/zhao-926/bidding-system.git`（HTTPS） |
+| 預設分支 | `main` |
+| GitHub Pages 來源 | **GitHub Actions**（已在 Settings → Pages 設定好，不要改成從分支部署） |
+| 線上網址 | `https://zhao-926.github.io/bidding-system/` |
+
+- Phase 1 開始時就 `git init -b main` 並設定 remote；每個 Phase commit 後 `git push origin main`。
+- 部署 workflow 在 Phase 6 撰寫（見 Phase 6），在那之前 push 不會產生網站，屬正常現象。
+- 第一次 push 若跳出 GitHub 登入，停下來請使用者完成登入，不要自行處理帳密或 token。
+
 - 所有檔案直接建在 `project\` 底下，**不要**再多包一層子資料夾。
 - **不需製作口頭報告簡報**；`docs/` 的文件會作為簡報素材，由使用者在 `report\` 另行處理。
 
@@ -257,9 +272,7 @@ struct User {
 - `scripts/build_web.sh`：`emcc ... -s MODULARIZE=1 -s EXPORT_NAME=createAuction --bind -O2`，輸出到 `web/`
 - 完成第 6 節介面與資料結構檢視面板
 - 部署到 GitHub Pages：
-  - Repo：`https://github.com/zhao-926/bidding-system`（Public，使用者已在網頁上建好空 repo，預設分支 `main`）
-  - 線上網址：`https://zhao-926.github.io/bidding-system/`
-  - 本機 `git init`、`git remote add origin https://github.com/zhao-926/bidding-system.git`，推送到 `main`
+  - Repo、remote、網址見第 0 節「GitHub 部署資訊」；Pages 來源已設為 GitHub Actions
   - 撰寫 `.github/workflows/deploy.yml`：push 到 `main` 時，安裝 Emscripten（`mymindstorm/setup-emsdk`）→ 執行 `scripts/build_web.sh` → 用 `actions/upload-pages-artifact` 上傳 `web/` → `actions/deploy-pages` 發布
   - 撰寫 `.gitignore`（`build/`、`*.o`、`*.exe`、編輯器暫存檔）
   - 網頁內所有資源路徑一律用相對路徑（因為網址有 `/bidding-system/` 子路徑）
@@ -301,9 +314,9 @@ struct User {
 | 3 | LinkedList | 1 | 測試通過 | [x] |
 | 4 | HashTable（含 rehash） | 1 | 測試通過 | [x] |
 | 5 | 不用 STL 檢查腳本 | 1 | `make check` 通過 | [x] |
-| 6 | MaxHeap（含 removeById） | 2 | 隨機測試通過 | [ ] |
-| 7 | BST（含 remove、rangeQuery、popMin） | 2 | 隨機測試通過 | [ ] |
-| 8 | MergeSort | 2 | 測試通過、穩定性測試 | [ ] |
+| 6 | MaxHeap（含 removeById） | 2 | 隨機測試通過 | [x] |
+| 7 | BST（含 remove、rangeQuery、popMin） | 2 | 隨機測試通過 | [x] |
+| 8 | MergeSort | 2 | 測試通過、穩定性測試 | [x] |
 | 9 | F1 註冊／切換使用者 | 3 | 業務測試 | [ ] |
 | 10 | F2 刊登商品 | 3 | 業務測試 | [ ] |
 | 11 | F3 ID 查詢、F4 關鍵字搜尋 | 3 | 業務測試 | [ ] |

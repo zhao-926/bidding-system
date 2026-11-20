@@ -3,10 +3,13 @@
 
 #include "test_framework.h"
 
-// 各測試檔提供的函式（Phase 2、3 會在這裡繼續新增）
+// 各測試檔提供的函式（Phase 3 會在這裡繼續新增）
 void run_dynarray_tests();
 void run_linkedlist_tests();
 void run_hashtable_tests();
+void run_maxheap_tests();
+void run_bst_tests();
+void run_mergesort_tests();
 
 int main() {
     std::cout << "== DynArray ==" << std::endl;
@@ -17,6 +20,15 @@ int main() {
 
     std::cout << "== HashTable ==" << std::endl;
     run_hashtable_tests();
+
+    std::cout << "== MaxHeap ==" << std::endl;
+    run_maxheap_tests();
+
+    std::cout << "== BST ==" << std::endl;
+    run_bst_tests();
+
+    std::cout << "== MergeSort ==" << std::endl;
+    run_mergesort_tests();
 
     return printTestSummary();
 }
