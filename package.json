@@ -1,0 +1,9 @@
+{
+  "name": "bidding-system",
+  "private": true,
+  "type": "module",
+  "description": "二手交易競標平台（資料結構期末專題）：JS 核心與網頁",
+  "scripts": {
+    "test": "node tests/js/test_core.mjs"
+  }
+}

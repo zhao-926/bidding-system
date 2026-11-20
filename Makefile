@@ -2,10 +2,11 @@
 #
 # 常用指令：
 #   make test    編譯並執行單元測試
-#   make check   檢查 core/ 沒有使用被禁止的 STL 容器
+#   make check   檢查 core/ 與 web/js/core/ 沒有使用被禁止的內建容器
 #   make cli     編譯 CLI 介面（build/auction_cli）
 #   make bench   編譯並執行效能對照（自刻 vs STL）
-#   make web     用 Emscripten 編譯 WebAssembly（見 scripts/build_web.sh）
+#   make test-js 執行網頁用 JS 核心的測試（需要 Node.js）
+#   make web     檢查網頁檔案齊全並跑 JS 測試；本機預覽：python -m http.server -d web 8000
 #   make sample  重新產生 data/sample.txt（範例資料存檔）
 #   make clean   刪除 build/
 #
@@ -26,7 +27,7 @@ CORE_HDR = $(wildcard core/*.h)
 TEST_SRC = $(wildcard tests/*.cpp)
 TEST_HDR = $(wildcard tests/*.h)
 
-.PHONY: all test cli bench web check clean
+.PHONY: all test test-js cli bench web check clean
 
 all: test cli
 
@@ -53,11 +54,14 @@ $(BUILD)/bench$(EXE): bench/bench.cpp $(CORE_SRC) $(CORE_HDR)
 bench: $(BUILD)/bench$(EXE)
 	./$(BUILD)/bench$(EXE)
 
-# ---- WebAssembly ----
+# ---- 網頁（JavaScript 版，無編譯步驟，web/ 就是要部署的內容）----
+test-js:
+	node tests/js/test_core.mjs
+
 web:
 	bash scripts/build_web.sh
 
-# ---- 檢查 core/ 不得使用 STL 容器 ----
+# ---- 檢查 core/（C++）與 web/js/core/（JS）不得使用內建容器 ----
 check:
 	bash scripts/check_no_stl.sh
 

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>二手交易競標平台</title>
+  <meta name="description" content="資料結構期末專題：以自刻 Hash Table、Max-Heap、Linked List、BST、Merge Sort 實作的二手交易競標平台">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">🔨</span>
+    <div>
+      <h1>二手交易競標平台</h1>
+      <p class="brand-sub">資料結構期末專題 · 全部資料結構自行實作</p>
+    </div>
+  </div>
+
+  <div class="topbar-group">
+    <label class="field-inline" for="userSelect">使用者</label>
+    <select id="userSelect" aria-label="切換使用者"></select>
+    <input id="newUserInput" type="text" placeholder="新使用者名稱" maxlength="20" aria-label="新使用者名稱" autocomplete="off">
+    <button id="addUserBtn" type="button" class="btn">註冊</button>
+  </div>
+
+  <div class="topbar-group clock-group">
+    <div class="clock" title="模擬時鐘：Demo 時可以快轉，不用真的等">
+      <span class="clock-label">模擬時間</span>
+      <strong id="clockText">第 0 分鐘</strong>
+    </div>
+    <button type="button" class="btn" data-action="advance" data-minutes="1">+1 分鐘</button>
+    <button type="button" class="btn" data-action="advance" data-minutes="60">+1 小時</button>
+    <button type="button" class="btn" data-action="advance-next">跳到下一個結標</button>
+    <input id="customMinutes" type="number" step="1" placeholder="自訂分鐘" aria-label="自訂快轉分鐘數">
+    <button type="button" class="btn" data-action="advance-custom">快轉</button>
+  </div>
+
+  <button id="resetBtn" type="button" class="btn btn-ghost" data-action="reset">重設範例資料</button>
+</header>
+
+<main class="layout">
+  <section class="main-col" aria-label="主要內容">
+    <nav class="tabs" role="tablist" aria-label="頁面">
+      <button type="button" role="tab" class="tab" data-view="list">商品列表</button>
+      <button type="button" role="tab" class="tab" data-view="sell">刊登商品</button>
+      <button type="button" role="tab" class="tab" data-view="mine">我的頁面</button>
+      <button type="button" role="tab" class="tab" data-view="ds">資料結構檢視</button>
+    </nav>
+
+    <!-- 商品列表 -->
+    <div id="view-list" class="view">
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="搜尋商品標題（關鍵字）" aria-label="搜尋商品" autocomplete="off">
+        <label class="field-inline" for="sortSelect">排序</label>
+        <select id="sortSelect" aria-label="排序欄位">
+          <option value="listing">刊登順序</option>
+          <option value="price">目前價格</option>
+          <option value="bids">有效出價數</option>
+          <option value="end">結標時間</option>
+        </select>
+        <select id="orderSelect" aria-label="升冪或降冪">
+          <option value="asc">由小到大</option>
+          <option value="desc">由大到小</option>
+        </select>
+        <label class="check"><input id="openOnlyCheck" type="checkbox"> 只看進行中</label>
+      </div>
+      <div id="itemGrid" class="grid"></div>
+    </div>
+
+    <!-- 刊登商品 -->
+    <div id="view-sell" class="view" hidden>
+      <form id="sellForm" class="panel form" autocomplete="off">
+        <h2>刊登商品</h2>
+        <p class="muted">刊登人：<strong id="sellerName">（請先選擇使用者）</strong></p>
+        <label>商品標題
+          <input name="title" type="text" maxlength="60" required placeholder="例如：機械鍵盤（青軸）">
+        </label>
+        <label>商品描述
+          <textarea name="description" rows="3" maxlength="300" placeholder="成色、配件、瑕疵…"></textarea>
+        </label>
+        <div class="form-row">
+          <label>起標價（元）
+            <input name="startPrice" type="number" step="1" required value="100">
+          </label>
+          <label>最小加價幅度（元）
+            <input name="minIncrement" type="number" step="1" required value="10">
+          </label>
+          <label>拍賣時長（分鐘）
+            <input name="duration" type="number" step="1" required value="60">
+          </label>
+        </div>
+        <div class="chips" aria-label="常用時長">
+          <button type="button" class="chip" data-action="duration" data-minutes="30">30 分鐘</button>
+          <button type="button" class="chip" data-action="duration" data-minutes="60">1 小時</button>
+          <button type="button" class="chip" data-action="duration" data-minutes="360">6 小時</button>
+          <button type="button" class="chip" data-action="duration" data-minutes="1440">1 天</button>
+          <button type="button" class="chip" data-action="duration" data-minutes="4320">3 天</button>
+        </div>
+        <button type="submit" class="btn btn-primary">刊登</button>
+      </form>
+    </div>
+
+    <!-- 我的頁面 -->
+    <div id="view-mine" class="view" hidden>
+      <div id="mineContent"></div>
+    </div>
+
+    <!-- 資料結構檢視 -->
+    <div id="view-ds" class="view" hidden>
+      <div id="dsContent"></div>
+    </div>
+  </section>
+
+  <aside class="side-col" aria-label="側欄">
+    <section class="panel">
+      <h2>即將結標 <span class="tag">BST 中序走訪</span></h2>
+      <ol id="upcomingList" class="mini-list"></ol>
+    </section>
+    <section class="panel">
+      <h2>時段範圍查詢 <span class="tag">BST rangeQuery</span></h2>
+      <form id="rangeForm" class="range-form">
+        <label>從第 <input name="t1" type="number" step="1" required value="0" aria-label="起始分鐘"> 分</label>
+        <label>到第 <input name="t2" type="number" step="1" required value="180" aria-label="結束分鐘"> 分</label>
+        <button type="submit" class="btn">查詢</button>
+      </form>
+      <ul id="rangeResult" class="mini-list"></ul>
+    </section>
+  </aside>
+</main>
+
+<!-- 商品詳情 -->
+<div id="detailOverlay" class="overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <button type="button" class="modal-close" data-action="close-detail" aria-label="關閉">✕</button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<footer class="opbar" aria-live="polite">
+  <span class="opbar-label">本次操作</span>
+  <span id="opText">尚未操作</span>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

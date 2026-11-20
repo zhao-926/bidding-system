@@ -77,9 +77,9 @@ D:\claude-practice\data-structures\
 
 - **核心邏輯**：C++17，放在 `core/`，不依賴任何 I/O 以外的函式庫。
 - **CLI 版本**：`g++` 編譯，用於測試、benchmark、終端機 Demo。
-- **網頁版本**：用 **Emscripten** 把同一份 `core/` 編譯成 WebAssembly（embind 匯出 API），前端用純 HTML/CSS/JavaScript，部署到 **GitHub Pages**（純靜態、免費）。
-  - 這樣網頁上跑的就是 C++ 自刻的資料結構，報告時可以說「網頁和 CLI 共用同一份演算法」。
-  - **備案**：如果 Emscripten 環境裝不起來，改成把 `core/` 用 JavaScript 一比一移植到 `web/js/core/`（同樣不准用 `Map`/`Set`/`Array.prototype.sort`，陣列只能當固定大小的底層記憶體），並在 README 註明。
+- **網頁版本（2026-11 決定：走 JavaScript 版，不使用 Emscripten）**：把 `core/` 用 JavaScript **一比一移植**到 `web/js/core/`，前端用純 HTML/CSS/JavaScript（ES Module，不需任何建置工具），部署到 **GitHub Pages**（純靜態、免費）。
+  - JS 版同樣自刻所有資料結構，**不准用** `Map`/`Set`/`Array.prototype.sort` 等內建容器與陣列方法，陣列只能當「固定大小的底層記憶體」（`new Array(n)` + 索引存取）；`scripts/check_no_stl.sh` 會一併檢查。
+  - 為確保兩個版本行為一致：JS 版的存檔格式與 C++ 版完全相同，且 JS 測試會驗證「JS 載入範例資料後的存檔」與 C++ 產生的 `data/sample.txt` **逐位元組相同**。
 - **資料保存**：網頁版用 `localStorage` 存 JSON 快照（序列化／反序列化寫在 C++ 端或 JS 端皆可）；CLI 版讀 `data/sample.txt` 初始資料。
 - **時間**：使用「模擬時鐘」（系統內部的 `now`，可快轉），Demo 時能立刻看到結標，不用真的等。
 
@@ -99,13 +99,11 @@ project/                   # = D:\claude-practice\data-structures\project（專�
 │   └── AuctionSystem.cpp
 ├── cli/
 │   └── main.cpp           # 終端機選單介面
-├── wasm/
-│   └── bindings.cpp       # embind 匯出給 JS
 ├── web/
 │   ├── index.html
 │   ├── style.css
-│   ├── app.js
-│   └── auction.js / auction.wasm   # Emscripten 產出
+│   ├── app.js             # 介面邏輯（呼叫 js/core）
+│   └── js/core/           # core/ 的 JavaScript 一比一移植（DynArray、HashTable、…、AuctionSystem）
 ├── tests/
 │   ├── test_main.cpp      # 自寫極簡測試框架（ASSERT 巨集）
 │   └── ...
@@ -267,18 +265,18 @@ struct User {
 - 輸出 Markdown 表格到 `docs/benchmark.md`，並附 1–2 句解讀
 - **驗收**：`make bench` 產出表格；`make check` 仍通過（bench 不在 core/ 內）
 
-### Phase 6 — WebAssembly 與網頁
-- `wasm/bindings.cpp` 用 embind 匯出 AuctionSystem API（回傳 JSON 字串給 JS 最簡單）
-- `scripts/build_web.sh`：`emcc ... -s MODULARIZE=1 -s EXPORT_NAME=createAuction --bind -O2`，輸出到 `web/`
+### Phase 6 — 網頁（JavaScript 移植版）與部署
+- 把 `core/` 一比一移植到 `web/js/core/`（JS 版，不使用 Emscripten）；`tests/js/` 以 Node 驗證移植正確（含與 `data/sample.txt` 逐位元組比對）
+- `scripts/build_web.sh`：驗證 JS 核心與網頁檔案齊全（無編譯步驟，`web/` 本身就是要部署的內容）
 - 完成第 6 節介面與資料結構檢視面板
 - 部署到 GitHub Pages：
   - Repo、remote、網址見第 0 節「GitHub 部署資訊」；Pages 來源已設為 GitHub Actions
-  - 撰寫 `.github/workflows/deploy.yml`：push 到 `main` 時，安裝 Emscripten（`mymindstorm/setup-emsdk`）→ 執行 `scripts/build_web.sh` → 用 `actions/upload-pages-artifact` 上傳 `web/` → `actions/deploy-pages` 發布
+  - 撰寫 `.github/workflows/deploy.yml`：push 到 `main` 時，先跑 C++ 與 JS 測試 → 用 `actions/upload-pages-artifact` 上傳 `web/` → `actions/deploy-pages` 發布（不需要 Emscripten）
   - 撰寫 `.gitignore`（`build/`、`*.o`、`*.exe`、編輯器暫存檔）
   - 網頁內所有資源路徑一律用相對路徑（因為網址有 `/bidding-system/` 子路徑）
   - 若 push 時要求登入，停下來請使用者完成 GitHub 驗證，不要自行處理帳密
 - **驗收**：本機 `python -m http.server` 開 `web/` 可完整操作；重新整理後資料仍在（localStorage）；GitHub Actions 綠勾；`https://zhao-926.github.io/bidding-system/` 可開啟並正常操作
-- 若 Emscripten 失敗：走第 2 節備案，並在 HANDOFF.md 記錄
+- 網頁版本採用 JS 移植（已不使用 Emscripten），HANDOFF.md 需註明這個決定
 
 ### Phase 7 — 文件與交接
 - `README.md`：專案簡介、功能列表、編譯／執行方式（CLI、測試、bench、web）、線上 Demo 網址、截圖
@@ -289,7 +287,7 @@ struct User {
 - **`HANDOFF.md`**（必做）：給其他 AI 的交接文件，內容包含：
   - 專案目的與課程規範限制（尤其「core/ 不可用 STL」）
   - 目錄與每個檔案的職責
-  - 建置環境與指令（g++ 版本、Emscripten 版本）
+  - 建置環境與指令（g++ 版本、Node 版本）
   - 資料流與主要 API 清單
   - 已知限制、備案是否啟用、未完成項目
   - 如何新增一個功能（步驟範例）
@@ -330,9 +328,9 @@ struct User {
 | 19 | F15 存讀檔、F16 範例資料 | 3–4 | 重啟後資料正確 | [x] |
 | 20 | CLI 完整流程 | 4 | 手動跑完流程 | [x] |
 | 21 | Benchmark 與對照表 | 5 | `docs/benchmark.md` 產出 | [x] |
-| 22 | WASM 編譯 | 6 | `web/` 有 .wasm 且可載入 | [ ] |
-| 23 | 網頁主要功能 | 6 | 瀏覽器手動測試 | [ ] |
-| 24 | 資料結構檢視面板 | 6 | Heap/Hash/BST 視覺化正確 | [ ] |
+| 22 | JS 核心移植（取代 WASM） | 6 | JS 測試通過、與 `data/sample.txt` 逐位元組相同 | [x] |
+| 23 | 網頁主要功能 | 6 | 瀏覽器手動測試 | [x] |
+| 24 | 資料結構檢視面板 | 6 | Heap/Hash/BST 視覺化正確 | [x] |
 | 25 | GitHub Pages 部署 | 6 | 線上網址可開 | [ ] |
 | 26 | README | 7 | 照步驟可編譯執行 | [ ] |
 | 27 | 架構圖 architecture.md | 7 | Mermaid 可渲染 | [ ] |
