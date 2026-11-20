@@ -6,6 +6,7 @@
 #   make cli     編譯 CLI 介面（build/auction_cli）
 #   make bench   編譯並執行效能對照（自刻 vs STL）
 #   make web     用 Emscripten 編譯 WebAssembly（見 scripts/build_web.sh）
+#   make sample  重新產生 data/sample.txt（範例資料存檔）
 #   make clean   刪除 build/
 #
 # Windows（MSYS2）若沒有 make 指令，請改用 mingw32-make，用法完全相同。
@@ -62,3 +63,8 @@ check:
 
 clean:
 	rm -rf $(BUILD)
+
+# ---- 產生 data/sample.txt（把內建範例資料寫成存檔；範例資料有改動時才需要重跑）----
+.PHONY: sample
+sample: cli
+	./$(BUILD)/auction_cli$(EXE) --write-sample data/sample.txt

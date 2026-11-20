@@ -561,6 +561,17 @@ static void test_sample_data() {
     ASSERT_EQ(first, sys.saveToString());
 }
 
+// data/sample.txt（CLI 啟動時讀的檔案）必須與內建範例資料完全一致；
+// 內建範例改動後請執行 make sample 重新產生
+static void test_sample_file_matches_builtin_sample() {
+    AuctionSystem builtin;
+    builtin.loadSampleData();
+    AuctionSystem fromFile;
+    Result r = fromFile.loadFromFile("data/sample.txt");   // 測試從專案根目錄執行
+    ASSERT_TRUE(r.ok);
+    ASSERT_EQ(builtin.saveToString(), fromFile.saveToString());
+}
+
 // 重設後回到空白狀態
 static void test_reset() {
     AuctionSystem sys;
@@ -693,6 +704,7 @@ void run_auction_tests() {
     RUN_TEST(test_load_invalid_keeps_current_data);
     RUN_TEST(test_save_and_load_file);
     RUN_TEST(test_sample_data);
+    RUN_TEST(test_sample_file_matches_builtin_sample);
     RUN_TEST(test_reset);
     RUN_TEST(test_data_structure_stats);
     RUN_TEST(test_random_operations_stay_consistent);

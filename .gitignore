@@ -13,3 +13,7 @@ Thumbs.db
 
 # Claude Code 本機設定
 .claude/
+
+# CLI 執行時產生的存檔
+data/save.txt
+test_save_tmp.txt
