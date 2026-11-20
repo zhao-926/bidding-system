@@ -332,12 +332,12 @@ struct User {
 | 23 | 網頁主要功能 | 6 | 瀏覽器手動測試 | [x] |
 | 24 | 資料結構檢視面板 | 6 | Heap/Hash/BST 視覺化正確 | [x] |
 | 25 | GitHub Pages 部署 | 6 | 線上網址可開 | [x] |
-| 26 | README | 7 | 照步驟可編譯執行 | [ ] |
-| 27 | 架構圖 architecture.md | 7 | Mermaid 可渲染 | [ ] |
-| 28 | 複雜度分析 complexity.md | 7 | 每個操作都有標 | [ ] |
-| 29 | Demo 錄影腳本 | 7 | 3–5 分鐘流程完整 | [ ] |
-| 30 | 分工說明 contribution.md | 7 | 存在 | [ ] |
-| 31 | HANDOFF.md | 7 | 其他 AI 可依此接手 | [ ] |
+| 26 | README | 7 | 照步驟可編譯執行 | [x] |
+| 27 | 架構圖 architecture.md | 7 | Mermaid 可渲染 | [x] |
+| 28 | 複雜度分析 complexity.md | 7 | 每個操作都有標 | [x] |
+| 29 | Demo 錄影腳本 | 7 | 3–5 分鐘流程完整 | [x] |
+| 30 | 分工說明 contribution.md | 7 | 存在 | [x] |
+| 31 | HANDOFF.md | 7 | 其他 AI 可依此接手 | [x] |
 
 ---
 
