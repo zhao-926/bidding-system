@@ -331,7 +331,7 @@ struct User {
 | 22 | JS 核心移植（取代 WASM） | 6 | JS 測試通過、與 `data/sample.txt` 逐位元組相同 | [x] |
 | 23 | 網頁主要功能 | 6 | 瀏覽器手動測試 | [x] |
 | 24 | 資料結構檢視面板 | 6 | Heap/Hash/BST 視覺化正確 | [x] |
-| 25 | GitHub Pages 部署 | 6 | 線上網址可開 | [ ] |
+| 25 | GitHub Pages 部署 | 6 | 線上網址可開 | [x] |
 | 26 | README | 7 | 照步驟可編譯執行 | [ ] |
 | 27 | 架構圖 architecture.md | 7 | Mermaid 可渲染 | [ ] |
 | 28 | 複雜度分析 complexity.md | 7 | 每個操作都有標 | [ ] |

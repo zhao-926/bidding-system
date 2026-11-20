@@ -689,6 +689,16 @@ $('#newUserInput').addEventListener('keydown', (event) => {
 
 // ---------------------------------------------------------------- 啟動
 
+// 網址 # 後面可以指定起始畫面（方便 Demo 與截圖）：#list #sell #mine #ds，或 #item=6 直接開啟商品詳情
+function applyHash() {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'list' || hash === 'sell' || hash === 'mine' || hash === 'ds') {
+        state.view = hash;
+    } else if (/^item=\d+$/.test(hash) && system.findItem(Number(hash.slice(5))) !== null) {
+        state.detailId = Number(hash.slice(5));
+    }
+}
+
 function boot() {
     const saved = storageGet(STORAGE_KEY);
     let message = null;
@@ -704,6 +714,7 @@ function boot() {
     const savedUser = storageGet(USER_KEY);
     state.user = (savedUser !== null && system.findUser(savedUser) !== null) ? savedUser : '';
     save();
+    applyHash();
     renderAll();
     $('#opText').textContent = '尚未操作 — 操作後這裡會顯示用到的資料結構與時間複雜度';
     if (message !== null) toast(message, false);
