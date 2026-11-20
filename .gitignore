@@ -1,0 +1,15 @@
+build/
+*.o
+*.exe
+*.obj
+
+# 編輯器暫存檔
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Claude Code 本機設定
+.claude/
